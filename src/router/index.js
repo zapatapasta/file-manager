@@ -3,6 +3,8 @@ import HomeView from '../views/HomeView.vue'
 import UserList from '@/components/userList.vue'
 import GroupList from '@/components/groupList.vue'
 import Groupinfo from '@/components/groupinfo.vue'
+import Files from '@/components/files.vue'
+import Fileinfo from '@/components/fileinfo.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,7 +12,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: Files
     },
     {
       path: '/userlist',
@@ -23,12 +25,25 @@ const router = createRouter({
       component: GroupList
     },
     {
-      path: '/grouplist/:groupname',
+      path: '/grouplist/:name',
       name:'groupinfo',
       component: Groupinfo,
-      props: true
-    }
+      props: route => ({name:route.params.name, group: JSON.parse(route.query.group)})
+    },
+    {
+      path:'/files',
+      name:'files',
+      component:Files
+      
+    },
+    {
+      path: '/files/:name',
+      name:'fileinfo',
+      component: Fileinfo,
+      props: route => ({name:route.params.name})
+    },
   ]
 })
+
 
 export default router

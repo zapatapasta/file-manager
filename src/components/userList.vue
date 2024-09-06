@@ -13,7 +13,13 @@ export default{
                 firstname:'', 
                 lastname:'', 
                 usergroup:[],
-                // file:null
+                creator:null,
+                creationtime:null,
+                lastmodifier:null,
+                lastmodificationtime:null,
+                theme:'',
+                language:'',
+                files:{names:[]}
             }   
         }
     },
@@ -22,16 +28,41 @@ export default{
             this.$store.commit('deleteuser', x)
         },
         change(){
+            
             if(this.iseditmode){
+                this.tempuser.lastmodifier = this.$store.getters.getcurrentuser.username
+                this.tempuser.lastmodificationtime = new Date().getTime()
+                console.log(this.newuser);
                 this.$store.commit('change',this.tempuser)
                 this.iseditmode = !this.iseditmode
+                this.isopen = !this.isopen
             }else{
-                this.$store.commit('add', this.newuser)
-                console.log(this.$store.state.users);
-                
+                this.newuser.creator = this.$store.getters.getcurrentuser.username
+                this.newuser.creationtime = new Date().getTime()
+                this.newuser.lastmodifier = this.$store.getters.getcurrentuser.username
+                this.newuser.lastmodificationtime = new Date().getTime()
+                this.newuser.theme = 'primary'
+                this.newuser.language = 'en'
+                if(this.newuser.username.length >= 5 && this.newuser.username.length < 48){
+                    if(this.newuser.firstname.length < 48 && this.newuser.lastname.length < 48){
+                        if(this.newuser.type === 'admin' || this.newuser.type === 'user'){
+                            if(this.$store.commit('add', this.newuser)){
+                                alert("not accepted")
+                                return
+                            }
+                            this.isopen = false
+                            this.newuser={
+                            type: '',
+                            username: '',
+                            firstname:'', 
+                            lastname:'', 
+                            usergroup:[],
+                            } 
+                        }
+                    }
+                }
             }
-                
-            this.isopen = !this.isopen
+            
         },
         editmode(user){
             this.catcheduser = user
@@ -57,20 +88,18 @@ export default{
     <div class="container-fluid bg-primary p-0">
         <div class="row p-3">
             <div class="col">
-                <table class="table table-hover">
+                <table class="table table-hover table-dark">
                     <dialog :open="isopen" class="w-50 mt-5">
                         <form class="d-flex flex-column" @submit.prevent>
-                            <div class="row">
-                                <div v-if="iseditmode" class="col d-flex justify-content-around flex-wrap row-gap-3">
+                            <div class="row bg-white text-dark">
+                                <div v-if="iseditmode" class="col d-flex justify-content-start flex-wrap row-gap-3">
                                     <label for="firstname" class="w-25 text-center">firstname</label>
                                     <input type="text" class="w-25" v-model="tempuser.firstname">
                                     <label for="lastname" class="w-25 text-center">lastname</label>
                                     <input type="text" class="w-25" v-model="tempuser.lastname">
-                                    <label for="firstname" class="w-25 text-center">username</label>
-                                    <input type="text" class="w-25" v-model="tempuser.username">
                                     <label for="firstname" class="w-25 text-center">type</label>
                                     <input type="text" class="w-25" v-model="tempuser.type">
-                                    <button class="btn btn-primary" type="submit" @click="change">edit</button>
+                                    <button class="btn btn-primary ms-5" type="submit" @click="change">edit</button>
                                 </div>
                                 <div v-else class="col d-flex justify-content-around flex-wrap row-gap-3">
                                     <label for="firstname" class="w-25 text-center">firstname</label>
@@ -97,7 +126,7 @@ export default{
                         </tr>
                     </thead>
                     <tbody>
-                        <tr  v-for="user in this.$store.state.users">
+                        <tr  v-for="user in this.$store.getters.getusers">
                             <td><p>{{ user.firstname }}</p></td>
                             <td><p>{{ user.lastname }}</p></td>
                             <td><p>{{ user.type }}</p></td>
