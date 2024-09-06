@@ -46,9 +46,7 @@ export default{
         changepath(){
             if(this.path === ''){
                 return '/'
-            }else{
-                console.log("ccc");
-                
+            }else{                
                 return this.path
             }
         }
@@ -90,6 +88,7 @@ export default{
             return z
         },
         deletefile(file){
+            
             this.$store.commit('deletefile',{filename:file})
             this.files = this.$store.getters.getcurrentuser.files.names
             this.folders = Object.keys(this.$store.state.currentfolder).filter(key=> key!=='names') 
@@ -258,12 +257,14 @@ export default{
                             <th scope="row" class="align-middle">foldername</th>
                             <th></th>
                             <th></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr  v-for="file in folders">
                             <td></td>
                             <td><a @click="changefolder(file)" class="nav-link">{{ file }}</a></td>
+                            <td></td>
                             <td></td>
                             <td></td>
                         </tr>

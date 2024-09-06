@@ -114,13 +114,19 @@ export default createStore({
             state.files = state.files.filter(file => file.name !== filename.name)
             
             let user = state.users.find(user => user.username === state.currentuser.username);
-            let currentFiles = state.currentuser.files;
+            // let currentFiles = state.currentuser.files;
+            let currentFiles = user.files;
             function searchAndDelete(obj) {
                 if (obj.hasOwnProperty('names')) {
-                    obj.names = obj.names.filter(file => file.name !== filename.name);
-                    user.files = obj
-                    state.currentuser = user
-                    return true;
+                    if(obj.names.length > 0){
+                        obj.names = obj.names.filter(file => file.name !== filename.name);
+                        
+                        state.currentfolder = obj
+                        user.files = obj
+                        state.currentuser = user
+                        state.currentfoldername = '/'
+                        return true
+                    }
                 }
                 for (let key in obj) {
                     if (typeof obj[key] === 'object') {
@@ -132,6 +138,10 @@ export default createStore({
                 return false;
             }
             searchAndDelete(currentFiles)
+            // state.users = state.users.map(userItem =>
+            //     userItem.username === user.username ? user : userItem
+            // );
+            console.log(state.users);
         },
         addfile(state,{newfile,path}){
             if(state.movemode === false){
