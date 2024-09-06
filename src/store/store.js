@@ -4,7 +4,7 @@ export default createStore({
     state: {
         users: [
             {type: 'admin', username: 'alia', firstname:'ali', lastname:'lal', usergroup:[], files:{names:[]}, theme:'primary',language:'en'},
-            {type: 'user', username: 'aliasd', firstname:'ali', lastname:'lal', usergroup:[], files:{names:[]}, theme:'primary',language:'en'},
+            {type: 'user', username: 'aliasd', firstname:'ali', lastname:'lal', usergroup:[], files:{names:[],sd:{names:[{name:"ss",shared:[]},{name:"gg",shared:[]}]}}, theme:'primary',language:'en'},
             {type: 'user', username: 'aliasddssd', firstname:'ali', lastname:'lal', usergroup:[], files:{names:[]}, theme:'primary',language:'en'},
             {type: 'user', username: 'aliaxzxzsd', firstname:'ali', lastname:'lal', usergroup:[], files:{names:[]}, theme:'primary',language:'en'},
         ],
@@ -121,13 +121,18 @@ export default createStore({
                     if(obj.names.length > 0){
                         obj.names = obj.names.filter(file => file.name !== filename.name);
                         
-                        state.currentfolder = obj
-                        user.files = obj
+                        user.files[state.currentfoldername] = obj
+                        state.currentfolder = user.files[state.currentfoldername]
+                        console.log(state.currentfolder);
+                        
                         state.currentuser = user
-                        state.currentfoldername = '/'
-                        return true
+                        // state.currentfoldername = '/'
+                        console.log(state.users);
+                        // return true
                     }
                 }
+                console.log("ddd");
+                
                 for (let key in obj) {
                     if (typeof obj[key] === 'object') {
                         if (searchAndDelete(obj[key])) {
@@ -141,7 +146,6 @@ export default createStore({
             // state.users = state.users.map(userItem =>
             //     userItem.username === user.username ? user : userItem
             // );
-            console.log(state.users);
         },
         addfile(state,{newfile,path}){
             if(state.movemode === false){

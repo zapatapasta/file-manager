@@ -90,7 +90,9 @@ export default{
         deletefile(file){
             
             this.$store.commit('deletefile',{filename:file})
-            this.files = this.$store.getters.getcurrentuser.files.names
+            this.files = this.$store.state.currentfolder.names
+            console.log(this.files);
+            
             this.folders = Object.keys(this.$store.state.currentfolder).filter(key=> key!=='names') 
         },
         selectedfile(e){
