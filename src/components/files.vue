@@ -242,6 +242,7 @@ export default{
                         <tr v-else v-for="file in files">
                             <td></td>
                             <td><a :href="file.name.split('.')[0]+`.txt`" class="nav-link" :download="file.name.split('.')[0]+`.txt`">{{ file.name }}</a></td>
+                            <!-- <td><RouterLink :to="{name:'fileinfo',params:{name:file.name},query:{file:JSON.stringify(file)}}" class="nav-link">{{ file.name }}</RouterLink></td> -->
                             <td v-if="file.shared.length > 0">{{sharedusers(file)}}</td>
                             <td v-else></td>
                             <td></td>

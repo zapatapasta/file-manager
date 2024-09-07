@@ -7,9 +7,10 @@ export default {
     },
     props:{
         name:String,
+        file:Object
     }
 }
 </script>
 <template>
-<h1>hi</h1>
+<h1>{{file.name}}</h1>
 </template>

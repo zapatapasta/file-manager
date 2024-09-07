@@ -40,7 +40,7 @@ const router = createRouter({
       path: '/files/:name',
       name:'fileinfo',
       component: Fileinfo,
-      props: route => ({name:route.params.name})
+      props: route => ({name:route.params.name,file:JSON.parse(route.query.file)})
     },
   ]
 })
