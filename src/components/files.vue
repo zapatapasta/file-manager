@@ -256,7 +256,7 @@ export default{
                     <tbody>
                         <tr v-if="usertype" v-for="file in adminfiles">
                             <td></td>
-                            <td><a :href="file.name.split('.')[0]+`.txt`" class="nav-link" :download="file.name.split('.')[0]+`.txt`">{{ file.name }}</a></td>
+                            <td><a href="data:text/plain;charset=utf-8," class="nav-link" :download="file.name.split('.')[0]+`.txt`">{{ file.name }}</a></td>
                             <!-- <td><RouterLink :to="{name:'fileinfo',params:{name:file.name},query:{file:JSON.stringify(file)}}" class="nav-link">{{ file.name }}</RouterLink></td> -->
                             <td v-if="file.shared.length > 0">{{sharedusers(file)}}</td>
                             <td v-else></td>
