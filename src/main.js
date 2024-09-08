@@ -12,7 +12,7 @@ const i18n = createI18n({
         message: {
           users: 'users',
           groups:'groups',
-          files:'files',
+          files:'file managment',
           changeuser:'change user',
           language:'language',
           theme:'theme color',
@@ -24,7 +24,7 @@ const i18n = createI18n({
         message: {
             users: 'کاربران',
             groups:'گروه ها',
-            files:'فایل ها',
+            files:'مدیریت فایل ها',
             changeuser:'تعویض کاربر',
             language:'زبان',
             theme:'رنگ تم',

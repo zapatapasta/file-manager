@@ -50,7 +50,7 @@ export default{
             <RouterLink :to="{name:'grouplist'}" class="nav-link text-black">{{ $t('message.groups') }}</RouterLink>
         </li>
         <li class="nav-item my-2">
-            <RouterLink :to="{name:'files'}" class="nav-link text-black">{{ $t('message.files') }}</RouterLink>
+            <RouterLink :to="{name:'files'}" @click="clicked" class="nav-link text-black">{{ $t('message.files') }}</RouterLink>
         </li>
         <li class="nav-item my-2">
             <a class="dropdown-toggle nav-link text-black" data-bs-toggle="dropdown" aria-expanded="false">{{ $t('message.changeuser') }}</a>

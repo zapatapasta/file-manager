@@ -4,7 +4,7 @@ export default createStore({
     state: {
         users: [
             {type: 'admin', username: 'alia', firstname:'ali', lastname:'lal', usergroup:[], files:{names:[]}, theme:'primary',language:'en'},
-            {type: 'user', username: 'aliasd', firstname:'ali', lastname:'lal', usergroup:[], files:{names:[],sd:{names:[{name:"ss",shared:[]},{name:"gg",shared:[]}]}}, theme:'primary',language:'en'},
+            {type: 'user', username: 'aliasd', firstname:'ali', lastname:'lal', usergroup:[], files:{names:[]}, theme:'primary',language:'en'},
             {type: 'user', username: 'aliasddssd', firstname:'ali', lastname:'lal', usergroup:[], files:{names:[]}, theme:'primary',language:'en'},
             {type: 'user', username: 'aliaxzxzsd', firstname:'ali', lastname:'lal', usergroup:[], files:{names:[]}, theme:'primary',language:'en'},
         ],
@@ -16,7 +16,7 @@ export default createStore({
         currentuser:{type: 'admin', username: 'alia', firstname:'ali', lastname:'lal', usergroup:[], files:{names:[]},theme:'primary',language:'en'},
         files:[],
         currentfolder:null,
-        currentfoldername:"",
+        currentfoldername:"/",
         copyfile:null,
         movemode:false
     },
@@ -53,8 +53,6 @@ export default createStore({
         change(state,tempuser){ 
             state.users = state.users.map(user =>
                 user.username === tempuser.username ? tempuser : user)
-            console.log(state.users);
-                
         },
         changegroup(state,{tempgroup,catchedgroup}){
             state.groups = state.groups.map(group =>
@@ -88,8 +86,6 @@ export default createStore({
                 currentFile.unselected = unselected
                 user.files = state.currentuser.files;
                 state.currentuser = user
-                console.log(state.files);
-                
                 return
             }else{
                 allfiles.shared.push(share)
@@ -100,7 +96,6 @@ export default createStore({
                 currentFile.unselected = unselected
                 user.files = state.currentuser.files;
                 state.currentuser = user
-                console.log(state.files);
             }
             // let statefile = state.files.find(filename => filename.name === file.name) 
             // statefile = file
@@ -124,18 +119,18 @@ export default createStore({
                 if (obj.hasOwnProperty('names')) {
                     if(obj.names.length > 0){
                         obj.names = obj.names.filter(file => file.name !== filename.name);
-                        
-                        user.files[state.currentfoldername] = obj
-                        state.currentfolder = user.files[state.currentfoldername]
-                        console.log(state.currentfolder);
-                        
+                        if(state.currentfoldername === ''){
+                            user.files = obj
+                            state.currentfolder = user.files
+                        }else{
+                            user.files[state.currentfoldername] = obj
+                            state.currentfolder = user.files[state.currentfoldername]
+                        }
                         state.currentuser = user
                         // state.currentfoldername = '/'
-                        console.log(state.users);
                         // return true
                     }
                 }
-                console.log("ddd");
                 
                 for (let key in obj) {
                     if (typeof obj[key] === 'object') {
@@ -216,7 +211,7 @@ export default createStore({
                 return
             }else{
                 currentFiles = findKey(state);
-                currentFiles.names.filter(file => file.name !== filename.name)
+                currentFiles.names =currentFiles.names.filter(file => file.name !== filename.name)
                 user.files = state.currentuser.files;
                 state.currentuser = user
             }

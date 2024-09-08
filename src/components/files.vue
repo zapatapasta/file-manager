@@ -3,6 +3,7 @@ export default{
     data(){
         return{
             files:null,
+            adminfiles:null,
             folders:[],
             path:'',
             isopen:false,
@@ -20,6 +21,7 @@ export default{
         if(this.$store.getters.isadmin){
             this.$store.state.currentfolder = this.$store.state.currentuser.files
             this.files = this.$store.state.files
+            this.adminfiles = this.$store.state.currentuser.files.names
             this.folders = Object.keys(this.$store.state.currentfolder).filter(key=> key!=='names')
             this.$store.state.currentfoldername = ''
             this.path = this.$store.state.currentfoldername
@@ -55,7 +57,8 @@ export default{
         usernamechange(){
             if(this.$store.getters.isadmin){
                 this.files = this.$store.state.files
-                this.folders = []
+                this.adminfiles = this.$store.state.currentfolder.names
+                this.folders = Object.keys(this.$store.state.currentfolder).filter(key=> key!=='names') 
             }else{
                 this.files = this.$store.state.currentuser.files.names
                 this.folders = Object.keys(this.$store.state.currentfolder).filter(key=> key!=='names') 
@@ -67,13 +70,13 @@ export default{
                     this.path = ''
                 }
                 this.files = this.$store.state.files
-                this.folders = []
+                this.adminfiles = this.$store.state.currentfolder.names
+                this.folders = Object.keys(this.$store.state.currentfolder).filter(key=> key!=='names') 
             }else{
                 if(this.$store.state.currentfoldername === '/'){
                     this.path = ''
                 }
                 this.files = this.$store.state.currentfolder.names
-                console.log(this.files);
                 this.folders = Object.keys(this.$store.state.currentfolder).filter(key=> key!=='names') 
             }
             
@@ -91,20 +94,18 @@ export default{
             
             this.$store.commit('deletefile',{filename:file})
             this.files = this.$store.state.currentfolder.names
-            console.log(this.files);
             
+            this.adminfiles = this.$store.state.currentfolder.names
             this.folders = Object.keys(this.$store.state.currentfolder).filter(key=> key!=='names') 
         },
         selectedfile(e){
             this.newfile = e.target.files[0]
-            console.log(this.newfile);
-            
         },
         addfile(){
             this.$store.commit('addfile',{newfile:this.newfile, path:this.path === ''?'/':this.path})
             this.isopen = false
             this.newfile = null
-            this.files = this.$store.state.currentfolder.names
+            this.files = [...this.files]
             this.folders = Object.keys(this.$store.state.currentfolder).filter(key=> key!=='names')
         },
         addmode(){
@@ -120,7 +121,6 @@ export default{
             this.addfolder = false
         },
         changefolder(file){
-            console.log(this.path);
             this.path = this.path+'/'+file
             
             this.$store.commit('setcurrentfolder', { foldername: file });
@@ -169,11 +169,13 @@ export default{
         <div class="row p-2">
             <div class="col d-block justify-content-start flex-wrap">
                 <dialog :open="addusermode">
-                    <select class="form-select" @change="selecteduser" size="3" multiple aria-label="select example">
-                        <option selected>Open this selectx menu</option>
-                        <option class="dropdown-item" v-for="user in unselected" :value="user.username">{{user.username}}</option>
-                    </select>
-                    <button @click="addusermode = false">done</button>
+                    <div class="d-flex align-items-center flex-column">
+                        <select class="form-select" @change="selecteduser" size="3" multiple aria-label="select example">
+                            <option selected>Open this selectx menu</option>
+                            <option class="dropdown-item" v-for="user in unselected" :value="user.username">{{user.username}}</option>
+                        </select>
+                        <button class="btn btn-primary mt-2 w-25 text-center p-1" @click="addusermode = false">done</button>
+                    </div>
                 </dialog>
                 <dialog :open="isopen" class="w-50 mt-5">
                     <form class="d-flex flex-column" @submit.prevent>
@@ -225,7 +227,7 @@ export default{
                             <th scope="col" class="align-middle text-white">filename</th>
                             <th scope="col" class="align-middle">shared</th>
                             <th></th>
-                            <th v-if="usertype === false" scope="col" class="align-middle d-flex justify-content-end">
+                            <th  scope="col" class="align-middle d-flex justify-content-end">
                                 <button class="btn btn-light" @click="addmode">add folder</button>
                                 <button class="btn btn-light mx-2" @click="isopen = true">add file</button>
                                 <button class="btn btn-light" @click="pastefile">paste</button>
@@ -233,11 +235,19 @@ export default{
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-if="usertype" v-for="file in files">
+                        <tr v-if="usertype" v-for="file in adminfiles">
                             <td></td>
                             <td><a :href="file.name.split('.')[0]+`.txt`" class="nav-link" :download="file.name.split('.')[0]+`.txt`">{{ file.name }}</a></td>
-                            <td>{{sharedusers(file)}}</td>
+                            <!-- <td><RouterLink :to="{name:'fileinfo',params:{name:file.name},query:{file:JSON.stringify(file)}}" class="nav-link">{{ file.name }}</RouterLink></td> -->
+                            <td v-if="file.shared.length > 0">{{sharedusers(file)}}</td>
+                            <td v-else></td>
                             <td></td>
+                            <td class="d-flex justify-content-end">
+                                <button class="btn btn-light mx-1" @click="deletefile(file)">delete</button>
+                                <button class="btn btn-light" @click="copyfile(file)">copy</button>
+                                <button class="btn btn-light mx-1" @click="movefile(file)">move</button>
+                                <button class="btn btn-secondary" type="button" @click="share(file)">add user</button>
+                            </td>
                         </tr>
                         <tr v-else v-for="file in files">
                             <td></td>
@@ -264,10 +274,28 @@ export default{
                         </tr>
                     </thead>
                     <tbody>
-                        <tr  v-for="file in folders">
+                        <tr v-for="file in folders">
                             <td></td>
                             <td><a @click="changefolder(file)" class="nav-link">{{ file }}</a></td>
                             <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                    <thead v-if="usertype">
+                        <tr>
+                            <th scope="col" class="align-middle text-white">all files</th>
+                            <th scope="col" class="align-middle">shared</th>
+                            <th scope="col" class="align-middle">owner</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="usertype" v-for="file in files">
+                            <td><a :href="file.name.split('.')[0]+`.txt`" class="nav-link" :download="file.name.split('.')[0]+`.txt`">{{ file.name }}</a></td>
+                            <td>{{sharedusers(file)}}</td>
+                            <td>{{ file.owner }}</td>
                             <td></td>
                             <td></td>
                         </tr>
