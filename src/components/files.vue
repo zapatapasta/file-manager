@@ -5,6 +5,7 @@ export default{
             files:null,
             adminfiles:null,
             folders:[],
+            error:false,
             path:'',
             isopen:false,
             newfile:null,
@@ -102,23 +103,32 @@ export default{
             this.newfile = e.target.files[0]
         },
         addfile(){
-            this.$store.commit('addfile',{newfile:this.newfile, path:this.path === ''?'/':this.path})
-            this.isopen = false
-            this.newfile = null
-            this.files = [...this.files]
-            this.folders = Object.keys(this.$store.state.currentfolder).filter(key=> key!=='names')
+            if(this.newfile === null){
+                this.error = true
+            }else{
+                this.$store.commit('addfile',{newfile:this.newfile, path:this.path === ''?'/':this.path})
+                this.isopen = false
+                this.newfile = null
+                this.files = [...this.files]
+                this.folders = Object.keys(this.$store.state.currentfolder).filter(key=> key!=='names')
+                this.error = false
+            }
         },
         addmode(){
             this.addfolder = true
             this.isopen = true
         },
         addnewfolder(){
-            this.$store.commit('addfolder',{foldername:this.newfoldername})
-            this.isopen = false
-            let folder = Object.keys(this.$store.state.currentfolder).filter(key => key !== 'names');
-            this.folders = folder;
-            this.newfoldername =''
-            this.addfolder = false
+            if(this.newfoldername.length >0){
+                this.$store.commit('addfolder',{foldername:this.newfoldername})
+                this.isopen = false
+                let folder = Object.keys(this.$store.state.currentfolder).filter(key => key !== 'names');
+                this.folders = folder;
+                this.newfoldername =''
+                this.addfolder = false
+            }else{
+                this.error = true
+            }
         },
         changefolder(file){
             this.path = this.path+'/'+file
@@ -181,15 +191,24 @@ export default{
                     <form class="d-flex flex-column" @submit.prevent>
                         <div class="row">
                             <div v-if="addfolder" class="col d-flex justify-content-around flex-wrap row-gap-3">
-                                <label for="foldername" class="w-25 text-center">foldername</label>
-                                <input type="text" class="w-25" v-model="newfoldername">
-                                <button class="btn btn-primary" @click="addnewfolder">add</button>
-                            </div>
-                            <div v-else class="col d-flex justify-content-around flex-wrap row-gap-3">
-                                <label for="file" class="w-25 text-center">file</label>
-                                <input type="file" class="w-25" @change="selectedfile">
-                                <button class="btn btn-primary" @click="addfile">add</button>
-                            </div>
+                                    <div class="w-50 d-flex align-items-center flex-column">
+                                        <div>
+                                            <label for="foldername" class="w-25 text-center">foldername</label>
+                                            <input type="text" class="w-50 ms-5" v-model="newfoldername">
+                                        </div>
+                                        <span v-if="error" class="ms-5 text-danger small">more than 1 char</span>
+                                    </div>
+                                    <button :class="`btn btn-primary ${error?'h-75':''}`" @click="addnewfolder">add</button>
+                                </div>
+                                <div v-else class="col d-flex justify-content-around flex-wrap row-gap-3">
+                                    <div class="w-75 d-flex justify-content-around">
+                                        <!-- <div> -->
+                                            <input type="file" class="w-25" @change="selectedfile">
+                                        <!-- </div> -->
+                                        <span v-if="error" class="ms-2 text-danger d-flex align-items-center mb-2 small">not selected</span>
+                                    </div>
+                                    <button class="btn btn-primary" @click="addfile">add</button>
+                                 </div>
                         </div>
                     </form>
                 </dialog>
