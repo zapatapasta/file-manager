@@ -6,6 +6,9 @@ export default{
             isopen:false,
             iseditmode:false,
             catchedgroup:{},
+            tempgroup:{},
+            namecorrect:false,
+            nameerror:false,
             newgroup:{
                 username: '',
                 users:[],
@@ -23,24 +26,36 @@ export default{
         },
         change(){
             if(this.iseditmode){
-                this.$store.state.groups = this.$store.state.groups.map(group =>
-                group.username === this.catchedgroup.username ? this.catchedgroup : group)
-                this.iseditmode = !this.iseditmode
-                this.isopen = !this.isopen
+                if(this.tempgroup.username.length > 0 && this.newgroup.username.length < 48){
+                    this.$store.commit('changegroup',{tempgroup:this.tempgroup,catchedgroup:this.catchedgroup})
+                    alert("edited successfully")
+                    this.nameerror= false
+                    this.iseditmode = !this.iseditmode
+                    this.isopen = !this.isopen
+
+                }else{
+                    this.nameerror = true
+                }      
             }else{                
                 this.newgroup.creator = this.$store.getters.getcurrentuser.username
                 this.newgroup.creationtime = new Date().getTime()
                 this.newgroup.lastmodifier = this.$store.getters.getcurrentuser.username
                 this.newgroup.lastmodificationtime = new Date().getTime()
-                if(this.newgroup.username.length >= 5 && this.newgroup.username.length < 48){
+                if(this.newgroup.username.length > 0 && this.newgroup.username.length < 48){
                     this.$store.state.groups.push(this.newgroup)
+                    alert("added successfull")
+                    this.nameerror = false
                     this.isopen = !this.isopen
+                    this.newgroup={username: '', users:[], unselected:[]} 
+                }else{
+                    this.nameerror = true
                 }
-                this.newgroup={username: '', users:[], unselected:[]} 
             }
         },
         editmode(group){
+            this.nameerror = false
             this.catchedgroup = group
+            this.tempgroup = {...group}
             this.isopen = !this.isopen
             this.iseditmode = !this.iseditmode
         },
@@ -58,15 +73,31 @@ export default{
                     <dialog :open="isopen" class="w-50 mt-5">
                         <form class="d-flex flex-column" @submit.prevent>
                             <div class="row bg-white text-dark">
-                                <div v-if="iseditmode" class="col d-flex justify-content-around flex-wrap row-gap-3">
-                                    <label for="name" class="w-25 text-center">name</label>
-                                    <input type="text" class="w-25" v-model="catchedgroup.username">
-                                    <button class="btn btn-primary" @click="change">edit</button>
+                                <div v-if="iseditmode" class="col d-flex justify-content-center flex-wrap">
+                                    <div class="w-50 d-flex align-items-center flex-column">
+                                        <div>
+                                            <label for="username" class="w-25 text-center me-4">name</label>
+                                            <input type="text" class="w-50 me-3" v-model="tempgroup.username">
+                                        </div>
+                                        <span v-if="nameerror" class="ms-4 text-danger small">more than 1 less 48</span>
+                                        <span v-else class="me-5 text-success small">correct</span>
+                                    </div>
+                                    <div class="w-50 d-flex justify-content-center">
+                                        <button class="btn btn-primary me-5 h-75" type="submit" @click="change">edit</button>
+                                    </div>
                                 </div>
                                 <div v-else class="col d-flex justify-content-center flex-wrap row-gap-3">
-                                    <label for="name" class="w-25 text-center">name</label>
-                                    <input type="text" class="w-25" v-model="newgroup.username">
-                                    <button class="btn btn-primary ms-5 me-5" @click="change">add</button>
+                                    <div class="w-50 d-flex align-items-center flex-column">
+                                        <div>
+                                            <label for="name" class="w-25 text-center me-4">name</label>
+                                            <input type="text" class="w-50 me-3" v-model="newgroup.username">
+                                        </div>
+                                        <span v-if="nameerror = true" class="ms-4 text-danger small">more than 1 less 48</span>
+                                    </div>
+                                    <div class="w-50 d-flex justify-content-center">
+                                        <button class="btn btn-primary ms-5 h-75" @click="change">add</button
+                                    </div>
+                                </div>
                                 </div>
                             </div>
                         </form>

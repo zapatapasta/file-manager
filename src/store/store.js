@@ -56,6 +56,10 @@ export default createStore({
             console.log(state.users);
                 
         },
+        changegroup(state,{tempgroup,catchedgroup}){
+            state.groups = state.groups.map(group =>
+                group.username === catchedgroup.username ? tempgroup : group)
+        },
         add(state,newuser){
 
             if(state.users.find(user=> user.username === newuser.username)){
