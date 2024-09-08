@@ -301,7 +301,7 @@ export default{
                             <td></td>
                         </tr>
                     </tbody>
-                    <thead v-if="usertype">
+                    <thead v-if="usertype && files.length > 0">
                         <tr>
                             <th scope="col" class="align-middle text-white">all files</th>
                             <th scope="col" class="align-middle">shared</th>
