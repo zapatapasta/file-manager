@@ -239,6 +239,14 @@ export default{
 
                     </div>
                 </div>
+                <div v-if="showmode">
+                    <h4 class="ms-3">all files</h4>
+                    <ul class="w-75">
+                        <li v-for="file in files" class="d-flex justify-content-start text-end mt-2">
+                            <p class="w-50 d-flex justify-content-start">{{ file.name }}</p>
+                        </li>
+                    </ul>
+                </div>
                 <table v-else class="table table-hover table-dark">
                     <thead>
                         <tr>
