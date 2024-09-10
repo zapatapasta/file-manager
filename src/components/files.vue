@@ -192,15 +192,6 @@ export default{
             <div class="col d-block justify-content-start flex-wrap">
                 <dialog :open="addusermode">
                     <div class="d-flex align-items-center justify-content-center">
-                        <!-- <select class="form-select" @change="selecteduser" size="3" multiple aria-label="select example">
-                            <option selected>Open this selectx menu</option>
-                            <option class="dropdown-item" v-for="user in unselected" :value="user.username">{{user.username}}</option>
-                        </select>
-                        <select class="form-select" @change="deleteuser" size="3" multiple aria-label="select example">
-                            <option selected>Open this selectx menu</option>
-                            <option class="dropdown-item" v-for="user in selectedsharedfile.shared" :value="user.username">{{user.username}}</option>
-                        </select>
-                        <button class="btn btn-primary mt-2 w-25 text-center p-1" @click="addusermode = false">done</button> -->
                         <div class="d-flex align-items-center mx-3">
                             <p class="text-primary me-4">add:</p>
                             <select class="form-select" @change="selecteduser" size="3" multiple aria-label="select example">
