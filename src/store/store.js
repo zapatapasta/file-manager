@@ -49,6 +49,10 @@ export default createStore({
         },
         deleteuser (state, x){
             state.users = state.users.filter(user => user.username !== x.username)
+            state.groups.map(group=>{
+                group.users = group.users.filter(user => user.username !== x.username)
+                group.unselected = group.unselected.filter(user => user.username !== x.username)
+            })
         },
         change(state,tempuser){ 
             state.users = state.users.map(user =>
@@ -64,17 +68,35 @@ export default createStore({
                 return false
             }            
             state.users.push(newuser)
+            state.groups.map((item, index) =>{
+                console.log(item.unselected);
+                
+                state.groups[index].unselected.push(newuser)
+                console.log(state.groups);
+                
+            })
             return true
         },
         addusergroup(state, {group,newuser}){
             state.groups.map((item, index) =>{
-                if(item.name === group.name){
+                if(item.username === group.username){
                     state.groups[index].users.push(newuser)
                     state.groups[index].unselected = group.unselected
                 } 
             })
             
         },
+        deleteusergroup(state, {group,deleteduser}){
+            state.groups.map((item, index) =>{
+                if(item.username === group.username){
+                    state.groups[index].unselected.push(deleteduser)
+                    state.groups[index].users = group.users
+                    console.log(state.groups[index].unselected);
+                } 
+            })
+            
+        },
+        
         addshareduser(state, {file ,share, unselected}){
             let user = state.users.find(user => user.username === state.currentuser.username);
             let currentFile = state.currentuser.files.names.find(filename => filename.name === file.name)
@@ -142,9 +164,6 @@ export default createStore({
                 return false;
             }
             searchAndDelete(currentFiles)
-            // state.users = state.users.map(userItem =>
-            //     userItem.username === user.username ? user : userItem
-            // );
         },
         addfile(state,{newfile,path}){
             if(state.movemode === false){
