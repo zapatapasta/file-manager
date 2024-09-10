@@ -221,20 +221,20 @@ export default{
                             </li>
                         </ul>
                         <ul>
-                            <li v-for="file in files" class="d-flex justify-content-start text-end mt-2">
+                            <li v-for="file in adminfiles" class="d-flex justify-content-start text-end mt-2">
                                 <p class="w-50 d-flex justify-content-start">{{ file.name }}</p>
                                 <div class="w-50">
-                                    <button v-if="usertype === false" class="btn btn-light" @click="deletefile(file)">delete</button>
-                                    <button v-if="usertype === false" class="btn btn-light mx-1" @click="copyfile(file)">copy</button>
-                                    <button v-if="usertype === false" class="btn btn-light" @click="movefile(file)">move</button>
-                                    <button v-if="usertype === false" class="btn btn-secondary mx-1" type="button" @click="share(file)">add user</button>
+                                    <button  class="btn btn-light" @click="deletefile(file)">delete</button>
+                                    <button  class="btn btn-light mx-1" @click="copyfile(file)">copy</button>
+                                    <button  class="btn btn-light" @click="movefile(file)">move</button>
+                                    <button  class="btn btn-secondary mx-1" type="button" @click="share(file)">add user</button>
                                 </div>
                             </li>
                         </ul>
                     </ul>
-                    <div v-if="usertype === false">
-                        <button class="btn btn-light" @click="addmode">add folder</button>
-                        <button class="btn btn-light mx-2" @click="isopen = true">add file</button>
+                    <div class="ms-1">
+                        <button class="btn btn-light ms-2" @click="addmode">add folder</button>
+                        <button class="btn btn-light mx-1" @click="isopen = true">add file</button>
                         <button class="btn btn-light" @click="pastefile">paste</button>
 
                     </div>
