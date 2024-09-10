@@ -120,6 +120,34 @@ export default createStore({
             // let statefile = state.files.find(filename => filename.name === file.name) 
             // statefile = file
         },
+        deleteshareduser(state, {file ,share, unselected}){
+            let user = state.users.find(user => user.username === state.currentuser.username);
+            let currentFile = state.currentuser.files.names.find(filename => filename.name === file.name)
+            let allfiles = state.files.find(filename=> filename.name === file.name)
+            console.log(share);
+            console.log(unselected);
+            if(state.currentfolder === state.currentuser.files){
+                allfiles.shared =allfiles.shared.filter(filename => filename.username !== share.username)
+                allfiles.unselected = unselected
+                currentFile.shared =currentFile.shared.filter(filename => filename.name !== share.username)
+                currentFile.unselected = unselected
+                user.files = state.currentuser.files;
+                state.currentuser = user
+                
+                return
+            }else{
+                allfiles.shared =allfiles.shared.filter(filename => filename.username !== share.username)
+                allfiles.unselected = unselected
+                currentFile = findKey(state);
+                currentFile = currentFile.names.find(filename => filename.name === file.name)
+                currentFile.shared =currentFile.shared.filter(filename => filename.name !== share.username)
+                currentFile.unselected = unselected
+                user.files = state.currentuser.files;
+                state.currentuser = user
+            }
+            let statefile = state.files.find(filename => filename.name === file.name) 
+            statefile = file
+        },
         deletegroupuser(state,{name, deleteduser}){
             
             state.groups.map((item)=>{

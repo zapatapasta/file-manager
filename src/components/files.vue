@@ -162,6 +162,18 @@ export default{
             this.$store.commit('addshareduser',{file: file, share: this.shared[0], unselected: this.unselected})
             this.shared = []
         },
+        deleteuser(e){
+            const selected = Array.from(e.target.selectedOptions).map(option => option.value)
+            console.log(selected);
+            
+            this.shared.push(this.selectedsharedfile.shared.find(user => user.username === selected[0]))
+            this.selectedsharedfile.shared = this.selectedsharedfile.shared.filter(file => file.username !== this.shared[0].username)
+            this.unselected.push(this.shared[0])
+            console.log(this.selectedsharedfile);
+            let file = this.$store.state.files.find(file=> file.name === this.selectedsharedfile.name)
+            this.$store.commit('deleteshareduser',{file: file, share: this.shared[0], unselected: this.unselected})
+            this.shared = []
+        }
     },
 }
 </script>
@@ -179,12 +191,31 @@ export default{
         <div class="row p-2">
             <div class="col d-block justify-content-start flex-wrap">
                 <dialog :open="addusermode">
-                    <div class="d-flex align-items-center flex-column">
-                        <select class="form-select" @change="selecteduser" size="3" multiple aria-label="select example">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <!-- <select class="form-select" @change="selecteduser" size="3" multiple aria-label="select example">
                             <option selected>Open this selectx menu</option>
                             <option class="dropdown-item" v-for="user in unselected" :value="user.username">{{user.username}}</option>
                         </select>
-                        <button class="btn btn-primary mt-2 w-25 text-center p-1" @click="addusermode = false">done</button>
+                        <select class="form-select" @change="deleteuser" size="3" multiple aria-label="select example">
+                            <option selected>Open this selectx menu</option>
+                            <option class="dropdown-item" v-for="user in selectedsharedfile.shared" :value="user.username">{{user.username}}</option>
+                        </select>
+                        <button class="btn btn-primary mt-2 w-25 text-center p-1" @click="addusermode = false">done</button> -->
+                        <div class="d-flex align-items-center mx-3">
+                            <p class="text-primary me-4">add:</p>
+                            <select class="form-select" @change="selecteduser" size="3" multiple aria-label="select example">
+                                <option selected>Open this selectx menu</option>
+                                <option class="dropdown-item" v-for="user in unselected" :value="user.username">{{user.username}}</option>
+                            </select>
+                        </div>
+                        <div class="d-flex align-items-center mx-3">
+                            <p class="text-danger me-4">delete:</p>
+                            <select class="form-select" @change="deleteuser" size="3" multiple aria-label="select example">
+                                <option selected>Open this selectx menu</option>
+                                <option class="dropdown-item" v-for="user in selectedsharedfile.shared" :value="user.username">{{user.username}}</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary mt-2 w-25 h-50 text-center p-1" @click="addusermode = false">done</button>
                     </div>
                 </dialog>
                 <dialog :open="isopen" class="w-50 mt-5">
