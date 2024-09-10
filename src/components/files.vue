@@ -15,7 +15,7 @@ export default{
             showmode:false,
             shared:[],
             unselected:[],
-            selectedsharedfile:null
+            selectedsharedfile:[]
         }
     },
     mounted(){
@@ -161,7 +161,7 @@ export default{
             this.unselected = this.unselected.filter(user => !selected.includes(user.username))
             this.$store.commit('addshareduser',{file: file, share: this.shared[0], unselected: this.unselected})
             this.shared = []
-        }
+        },
     },
 }
 </script>

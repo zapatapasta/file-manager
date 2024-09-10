@@ -67,14 +67,12 @@ export default createStore({
             if(state.users.find(user=> user.username === newuser.username)){
                 return false
             }            
+            console.log(newuser);
             state.users.push(newuser)
-            state.groups.map((item, index) =>{
-                console.log(item.unselected);
+            // state.groups.map((item, index) =>{
+            //     state.groups[index].unselected.push(newuser)
                 
-                state.groups[index].unselected.push(newuser)
-                console.log(state.groups);
-                
-            })
+            // })
             return true
         },
         addusergroup(state, {group,newuser}){
